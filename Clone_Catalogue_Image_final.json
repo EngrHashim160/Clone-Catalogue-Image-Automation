@@ -1,0 +1,731 @@
+{
+  "name": "Clone Catalogue Image final",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1xbJmgYfm9_SX3ZawoUPVkBEulKHQkING1XEnkXrnBJk",
+          "mode": "list",
+          "cachedResultName": "Catálogo ShopShop",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xbJmgYfm9_SX3ZawoUPVkBEulKHQkING1XEnkXrnBJk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 146290286,
+          "mode": "list",
+          "cachedResultName": "Floristería",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xbJmgYfm9_SX3ZawoUPVkBEulKHQkING1XEnkXrnBJk/edit#gid=146290286"
+        },
+        "options": {}
+      },
+      "id": "7d7154fe-4a5b-46e8-802e-45e8d45fed11",
+      "name": "Read Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        -200,
+        -260
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "eVpRDcwTUlC3cWuv",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Image URL'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "88b42231-52e5-458e-9235-04d4ea8ca650",
+      "name": "Download Original Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "642eb218-1774-4df1-bafb-428be1f7fc6a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f0727070-7cd5-46b8-844b-a4bc6d15ad7e",
+      "name": "AI Service Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        600,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "fc65337d-fa85-4024-871b-c705a9863246",
+      "name": "Wait for Processing",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1680,
+        -240
+      ],
+      "webhookId": "572251fa-9daf-4c9a-8caa-f57ca65bc0a6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "check-completed",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "succeeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ddff0e2f-ef86-4202-8e9f-425d7a51725a",
+      "name": "Check if Completed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2300,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "adfe20a7-108d-4854-97c6-bd3dc1c52293",
+      "name": "Download Processed Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "name": "={{$json[\"Title\"] + \".jpg\"}}  ",
+        "driveId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1NR1LK6kuZ8Cv6tNNgFB8z42FN1AZfIuj",
+          "mode": "url"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "root",
+          "mode": "list",
+          "cachedResultName": "/ (Root folder)",
+          "cachedResultUrl": "https://drive.google.com/drive"
+        },
+        "options": {}
+      },
+      "id": "6c378992-7cb5-48fb-87ab-d942d5ebc0a8",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        220
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "WNwhoAsGXiT4hYyc",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "reader",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "id": "b3942316-114f-49b1-8781-e456192a9c00",
+      "name": "Make File Public",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1600,
+        220
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "WNwhoAsGXiT4hYyc",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "83288a37-08b5-4c6a-83d3-af4a79b5b509",
+              "name": "row_number",
+              "value": "={{ $('Read Google Sheets').item.json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "7ff374a7-45e9-43d7-bc45-399cae926f61",
+              "name": "image_link",
+              "value": "={{ $('Upload to Google Drive').item.json.webViewLink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "512806e8-bcc0-49c2-933a-d6f8dd8518bb",
+      "name": "Prepare Update Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1880,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1xbJmgYfm9_SX3ZawoUPVkBEulKHQkING1XEnkXrnBJk",
+          "mode": "list",
+          "cachedResultName": "Catálogo ShopShop",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xbJmgYfm9_SX3ZawoUPVkBEulKHQkING1XEnkXrnBJk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 146290286,
+          "mode": "list",
+          "cachedResultName": "Floristería",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xbJmgYfm9_SX3ZawoUPVkBEulKHQkING1XEnkXrnBJk/edit#gid=146290286"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "new_image_link": "={{ $json.image_link }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "new_image_link",
+              "displayName": "new_image_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c8b34035-262a-4dbf-91ce-b124b9035908",
+      "name": "Update Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2320,
+        220
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "eVpRDcwTUlC3cWuv",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Attach a _rowNumber field equal to the sheet row (data starts on row 2)\nreturn $input\n  .all()\n  .map((item, index) => {\n    item.json._rowNumber = index + 2;\n    return item;\n  });\n"
+      },
+      "id": "5942abf4-ddb5-459c-88ce-b51d36542eba",
+      "name": "Add Row Tracking",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "4e1d23bb-477d-437f-9c96-5b6506a20cab",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        -260
+      ],
+      "id": "816f6e05-0fe6-4d71-bb56-692591adc51f",
+      "name": "Webhook",
+      "webhookId": "4e1d23bb-477d-437f-9c96-5b6506a20cab"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b66c916f-4c8c-4b76-b379-88c63644067b",
+              "leftValue": "={{ $json['Image URL'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        180,
+        -260
+      ],
+      "id": "85fc48b4-bc72-464e-88d0-86b580c4976a",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.replicate.com/v1/models/black-forest-labs/flux-kontext-pro/predictions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Token r8_RbTFaaIM4hQybhOohrohGQHP5MKBaLl3lMCSs"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\t\"input\": {\n      \"prompt\": \"Photorealistic front-angle bouquet image, preserving the exact arrangement and composition from the reference. Change background to realistic green grass, adjust flower colors to elegant formal tones (white, cream, muted red, and soft pink), enhance with flawless natural daylight, soft diffused highlights, razor-sharp floral textures, and polished edges for a premium e-commerce look.\",\n      \"input_image\": \"{{ $json['Image URL'] }}\",\n      \"output_format\": \"jpg\"\n\t}\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "ab5f6d9b-706b-46ef-8a67-cb8c662b30c9",
+      "name": "Replicate: Start Prediction",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1160,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        880,
+        -260
+      ],
+      "id": "b26b6678-80e0-4684-9059-8398a9bfb6bd",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls.get }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token r8_RbTFaaIM4hQybhOohrohGQHP5MKBaLl3lMCSs"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1860,
+        -240
+      ],
+      "id": "73f834eb-f534-42bb-9f80-689ff6a6d28b",
+      "name": "Replicate: Check Status",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "989ac56b-ae65-4fce-9188-11c614efcdb1",
+              "leftValue": "={{ $json.urls.get }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        -240
+      ],
+      "id": "a95d1283-017e-4a3d-9b01-2224c79276a6",
+      "name": "skip failed/throttled requests"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2100,
+        220
+      ],
+      "id": "339c90bb-a19f-41c3-8ac4-c9c6e523a172",
+      "name": "Wait1",
+      "webhookId": "0d31793a-bcab-47e2-adac-87db9c363617"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Read Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Add Row Tracking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Row Tracking": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Original Image": {
+      "main": [
+        [
+          {
+            "node": "AI Service Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Service Router": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Processing": {
+      "main": [
+        [
+          {
+            "node": "Replicate: Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Completed": {
+      "main": [
+        [
+          {
+            "node": "Download Processed Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Processed Image": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Make File Public",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make File Public": {
+      "main": [
+        [
+          {
+            "node": "Prepare Update Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Update Data": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Read Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Download Original Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replicate: Start Prediction": {
+      "main": [
+        [
+          {
+            "node": "skip failed/throttled requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Replicate: Start Prediction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replicate: Check Status": {
+      "main": [
+        [
+          {
+            "node": "Check if Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "skip failed/throttled requests": {
+      "main": [
+        [
+          {
+            "node": "Wait for Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dfa9ae40-87de-46d5-9266-0809ac489d9c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c4dc933a00d73d9e01a0fafaba0af5010411821fe896e769e24a76770cbd2f8"
+  },
+  "id": "ryTcMozt8L7rWy6Q",
+  "tags": []
+}
