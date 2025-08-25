@@ -1,7 +1,7 @@
 # 🌸 Clone Catalogue Image Automation
 
 This n8n workflow automates the enhancement of product images from a Google Sheets catalogue. It downloads original images, processes them using **Replicate’s Flux-Kontext-Pro AI model** for premium e-commerce quality, uploads them to Google Drive, and updates the Google Sheet with the new public image links.
-
+![Clone Catalogue Image Final](Clone_Catalogue_Image_final.png)
 ---
 
 ## 🚀 Features
